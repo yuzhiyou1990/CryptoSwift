@@ -13,8 +13,12 @@ let package = Package(
       targets: ["CryptoSwift"]
     )
   ],
+  dependencies: [
+      // Dependencies declare other packages that this package depends on.
+       .package(url: "https://github.com/keefertaylor/Base58Swift.git", from: "2.1.14"),
+  ],
   targets: [
-    .target(name: "CryptoSwift"),
+    .target(name: "CryptoSwift", dependencies: ["Base58Swift"]),
     .testTarget(name: "CryptoSwiftTests", dependencies: ["CryptoSwift"]),
     .testTarget(name: "TestsPerformance", dependencies: ["CryptoSwift"])
   ],

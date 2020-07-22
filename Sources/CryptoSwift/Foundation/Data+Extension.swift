@@ -16,6 +16,18 @@
 import Foundation
 
 extension Data {
+ init?(secRandomCount c: Int) {
+    var data = Data(count: c)
+    let result = data.withUnsafeMutableBytes{
+        SecRandomCopyBytes(kSecRandomDefault, c, $0.baseAddress!)
+    }
+    guard result == errSecSuccess else {
+        return nil
+    }
+    self.init(data)
+  }
+}
+extension Data {
   /// Two octet checksum as defined in RFC-4880. Sum of all octets, mod 65536
   public func checksum() -> UInt16 {
     let s = self.withUnsafeBytes { buf in
@@ -35,9 +47,12 @@ extension Data {
   public func sha224() -> Data {
     Data( Digest.sha224(bytes))
   }
-
+    
   public func sha256() -> Data {
     Data( Digest.sha256(bytes))
+  }
+  public func sha256_2() -> Data {
+    sha256().sha256()
   }
 
   public func sha384() -> Data {
@@ -47,11 +62,12 @@ extension Data {
   public func sha512() -> Data {
     Data( Digest.sha512(bytes))
   }
-
   public func sha3(_ variant: SHA3.Variant) -> Data {
     Data( Digest.sha3(bytes, variant: variant))
   }
-
+  public func keccak256() -> Data {
+    Data( Digest.sha3(bytes, variant: .keccak256))
+  }
   public func crc32(seed: UInt32? = nil, reflect: Bool = true) -> Data {
     Data( Checksum.crc32(bytes, seed: seed, reflect: reflect).bytes())
   }
